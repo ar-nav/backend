@@ -16,8 +16,8 @@ describe('AdssControllerTest', () => {
 
   it('Should create advertisement', async () => {
     let newAdsData = {
-      description: 'Iklam',
-      urlToAsset: [],
+      description: 'Iklan',
+      urlToAsset: 'url',
       lat: 0,
       lng: 0,
       radius: 5
@@ -29,14 +29,14 @@ describe('AdssControllerTest', () => {
   it('Should update advertisements', async () => {
     let advertisementId = '1234567asdfgASDFG'
     let updatedData = {
-      searchHistory : [{
-        lat: 0,
-        lng: 0,
-        description: 'someplace',
-      }]
+      description: 'Iklan-edited',
+      urlToAsset: 'urledit',
+      lat: 1,
+      lng: 1,
+      radius: 6
     }
     const result = await request(app).put(`/advertisements/${advertisementId}`, )
-    expect (result.data.data).toEqual(updatedData.searchHistory)
+    expect (result.data.data).toEqual(updatedData)
   })
 
   it('Should delete advertisements', async () => {
