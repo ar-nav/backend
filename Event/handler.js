@@ -7,6 +7,7 @@ const {
   GraphQLInt,
   GraphQLList
 } = require('graphql');
+const shakeId = require('uuid')
 
 const AWS = require('aws-sdk');
 
