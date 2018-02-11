@@ -46,6 +46,26 @@ async function postEvent(handle) {
   });
 }
 
+async function getPlace(handle) {
+  return new Promise((resolve, reject) => {
+    let params = {
+      TableName: "Places",
+      Item: {
+        'ID': handle
+      }
+    }
+    dynamoDb.get(params, function(err, data) {
+      if (!err) {
+        console.log('yolo', JSON.stringify(err));
+        resolve(data)
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
+
 async function postPlace(handle) {
   return new Promise((resolve, reject) => {
     let id = shakeId()
@@ -112,6 +132,19 @@ exports.graphqlHandler = (event, context, callback) => {
 
       break;
     }
+    case "getPlace": {
+      console.log("eventArguments", context);
+      postPlace(event.arguments.ID)
+        .then(result => {
+          console.log('data result create Place', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          console.log('fast get Place', err)
+          callback(err);
+        });
+      break;
+    }
     case "createPlaces": {
       console.log("eventArguments", context);
       postPlace(event.arguments.input)
@@ -120,11 +153,12 @@ exports.graphqlHandler = (event, context, callback) => {
           callback(null, result);
         })
         .catch(err => {
-          console.log('fast', err)
+          console.log('fast place', err)
           callback(err);
         });
       break;
     }
+
     default: {
       callback(`Unknown field, unable to resolve ${event.field}`, null);
       break;

@@ -170,6 +170,20 @@ appsync
       {
         apiId: appId /* required */,
         dataSourceName: 'lambda' /* required */,
+        fieldName: 'getPlace' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/getPlace-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Query' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/getPlace-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
         fieldName: 'createPlace' /* required */,
         requestMappingTemplate: fs.readFileSync(
           'mapping-templates/createPlace-request-mapping-template.txt',
@@ -177,7 +191,7 @@ appsync
         ) /* required */,
         typeName: 'Mutation' /* required */,
         responseMappingTemplate: fs.readFileSync(
-          'mapping-templates/cratePlace-response-mapping-template.txt',
+          'mapping-templates/createPlace-response-mapping-template.txt',
           'utf8'
         ) /* required */,
       }
