@@ -17,7 +17,7 @@ const userPoolId = 'us-east-1_tGZgUAA9n'; // Your Cognito User Pool Id
 const roleName = 'ArahanProject';
 const accountId = '015852978777';
 const serviceRole = `arn:aws:iam::${accountId}:role/${roleName}`; // Service IAM Role for appsync to access data sources
-const functionName = 'Arahan-serverless';
+const functionName = 'serverless-Arahan';
 const lambdaArn = `arn:aws:lambda:${awsRegion}:${accountId}:function:${
   functionName
 }`;
@@ -164,6 +164,20 @@ appsync
         typeName: 'Mutation' /* required */,
         responseMappingTemplate: fs.readFileSync(
           'mapping-templates/createEvent-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
+        fieldName: 'createPlace' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/createPlace-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Mutation' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/cratePlace-response-mapping-template.txt',
           'utf8'
         ) /* required */,
       }

@@ -21,6 +21,11 @@ custom:
 functions:
   graphql:
     handler: handler.graphqlHandler
+    events:
+    - http:
+        path: graphql
+        method: post
+        cors: true
 
 resources:
   Resources:
@@ -56,11 +61,11 @@ resources:
       Properties:
         KeySchema:
           -
-            AttributeName: event_id
+            AttributeName: ID
             KeyType: HASH
         AttributeDefinitions:
           -
-            AttributeName: event_id
+            AttributeName: ID
             AttributeType: S
         ProvisionedThroughput:
           ReadCapacityUnits: 10
@@ -71,11 +76,11 @@ resources:
       Properties:
         KeySchema:
           -
-            AttributeName: place_id
+            AttributeName: ID
             KeyType: HASH
         AttributeDefinitions:
           -
-            AttributeName: place_id
+            AttributeName: ID
             AttributeType: S
         ProvisionedThroughput:
           ReadCapacityUnits: 10

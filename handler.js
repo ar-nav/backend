@@ -1,66 +1,128 @@
-import 'babel-polyfill';
+import "babel-polyfill";
 
-import shakeId from 'uuid/v1'
-import AWS from 'aws-sdk'
+import shakeId from "uuid/v1";
+import AWS from "aws-sdk";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-console.log('Importing data into DynamoDB. Please wait.');
+console.log("Importing data into DynamoDB. Please wait.");
 
 async function getRawEvent(handle) {
-  try {
+  return new Promise((resolve, reject) => {
     let params = {
-      Tablename : 'Event',
-      event_id: handle
-    }
-    let getEventInfo = await dynamoDb.get(params, (err, data) => {
-      if (err) return err
-      else return data
-    })
-  }
-  catch(err) {
-    return err
-  }
+      TableName: "Events"
+    };
+    dynamoDb.scan(params, function(err, data) {
+      if (!err) {
+        console.log(JSON.stringify(data, null, 2));
+        resolve(data.Items);
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
 }
 
 async function postEvent(handle) {
-  try {
+  return new Promise((resolve, reject) => {
+    let id = shakeId()
     let params = {
-      Tablename: 'Event',
-      event_id: uuid(),
-      eventName: handle
-    }
-    let createEvent = await dynamoDb.put(params, (err, data) => { 
-      if (err) return err
-      else return data
-    })
-  }
-  catch(err) {
+      TableName: "Events",
+      Item: {
+        'ID': id,
+        'name': handle
+      }
+    };
+    dynamoDb.put(params, function(err, data) {
+      if (!err) {
+        console.log('yolo', JSON.stringify(err));
+        resolve({ID: id, name: handle});
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
 
-  }
+async function postPlace(handle) {
+  return new Promise((resolve, reject) => {
+    let id = shakeId()
+    let params = {
+      TableName: "Places",
+      Item: {
+        'ID': id,
+        'placeName': handle.placeName,
+        'latitude': handle.latitude,
+        'longitude': handle.longitude,
+        'eventId': handle.eventId, 
+        'eventName': handle.eventName
+      }
+    }
+    dynamoDb.put(params, function(err, data) {
+      if (!err) {
+        console.log('yolo', JSON.stringify(err));
+        resolve({
+          ID: id,
+          placeName: handle.placeName,
+          latitude: handle.latitude,
+          longitude: handle.longitude,
+          eventId: handle.eventId, 
+          eventName: handle.eventName
+        })
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
 }
 
 exports.graphqlHandler = (event, context, callback) => {
-  console.log('Received event {}', JSON.stringify(event, 3));
+  console.log("Received event {}", JSON.stringify(event, 3));
 
-  console.log('Got an Invoke Request.');
+  console.log("Got an Invoke Request.");
   switch (event.field) {
-    case 'getEvent': {
-      getRawEvent(event.arguments.ID).then(
-        result => {
+    case "getEvents": {
+      console.log("ini conntex", context);
+      getRawEvent(event.field)
+        .then(result => {
+          console.log('dataresult get Event',  JSON.stringify(result, null, 2));
           callback(null, result);
-        }
-      );
+        })
+        .catch(err => {
+          console.log('ini err get event', err)
+          callback(err);
+        });
 
       break;
     }
-    case 'createEvent': {
-      postEvent(
-        event.arguments.eventName
-      ).then(result => {
-        callback(null, result);
-      });
+    case "createEvent": {
+      console.log("eventArguments", context);
+      postEvent(event.arguments.input.eventName)
+        .then(result => {
+          console.log('data result create Event', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          console.log('fast', err)
+          callback(err);
+        });
 
+      break;
+    }
+    case "createPlaces": {
+      console.log("eventArguments", context);
+      postPlace(event.arguments.input)
+        .then(result => {
+          console.log('data result create Place', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          console.log('fast', err)
+          callback(err);
+        });
       break;
     }
     default: {
