@@ -1,45 +1,118 @@
-service: user-api-graphql
+service: serverless-Arahan
+
+frameworkVersion: ">=1.21.0 <2.0.0"
 
 provider:
   name: aws
   runtime: nodejs6.10
-  environment:
-    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+  stage: dev
+  region: us-east-1
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  account_id: ${opt:account_id}
+  serverless-offline:
+    port: 4000
+  webpackIncludeModules: true
 
 functions:
   graphql:
-    handler: Event/handler.graphql
-    events:
-      - http:
-          path: place
-          method: get
+    handler: handler.graphqlHandler
 
 resources:
   Resources:
-    placesTable:
-      Type: 'AWS::DynamoDB::Table'
-      DeletionPolicy: Retain
+    AppSyncServiceRole:
+      Type: "AWS::IAM::Role"
       Properties:
-        AttributeDefinitions:
-          - AttributeName: placeId
-            AttributeType: S
+        RoleName: "ArahanAppRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          -
+            PolicyName: "Lambda-AppSyncServiceRole-Policy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - "lambda:invokeFunction"
+                  Resource:
+                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-graphql-appsync-lda-production-graphql"
+                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-graphql-appsync-lda-production-graphql:*"
+    EventTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
         KeySchema:
-          - AttributeName: placeId
+          -
+            AttributeName: event_id
             KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: event_id
+            AttributeType: S
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
-
-plugins:
-  - serverless-plugin-graphiql
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: 'Events'
+    PlacesTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: place_id
+            KeyType: HASH
+        AttributeDefinitions:
+          -
+            AttributeName: place_id
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: 'Places'
+    ServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "ArahanAppRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "lambda.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          -
+            PolicyName: "Dynamo-ServiceRole-Policy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - "dynamodb:Query"
+                    - "dynamodb:BatchWriteItem"
+                    - "dynamodb:GetItem"
+                    - "dynamodb:DeleteItem"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:Scan"
+                    - "dynamodb:UpdateItem"
+                  Resource:
+                    - "arn:aws:dynamodb:us-east-1:*:table/Events"
+                    - "arn:aws:dynamodb:us-east-1:*:table/Events/*"
+                    - "arn:aws:dynamodb:us-east-1:*:table/Places"
+                    - "arn:aws:dynamodb:us-east-1:*:table/Places/*"
