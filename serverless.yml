@@ -27,7 +27,7 @@ resources:
     AppSyncServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
-        RoleName: "ArahanAppRole"
+        RoleName: "ArahanProject"
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -49,8 +49,8 @@ resources:
                   Action:
                     - "lambda:invokeFunction"
                   Resource:
-                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-graphql-appsync-lda-production-graphql"
-                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-graphql-appsync-lda-production-graphql:*"
+                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-Arahan-production-graphql"
+                    - "arn:aws:lambda:us-east-1:${self:custom.account_id}:function:serverless-Arahan-production-graphql:*"
     EventTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
@@ -84,7 +84,7 @@ resources:
     ServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
-        RoleName: "ArahanAppRole"
+        RoleName: "ArahanProjectDb"
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:

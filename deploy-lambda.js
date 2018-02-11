@@ -14,10 +14,10 @@ const appsync = new AWS.AppSync({ apiVersion: '2017-07-25' });
 const graphQLAPIName = 'arahan service'; // your graphQL API Name
 const awsRegion = 'us-east-1'; // AWS Region ex - us-east-1
 const userPoolId = 'us-east-1_tGZgUAA9n'; // Your Cognito User Pool Id
-const roleName = 'ArahanAppRole';
+const roleName = 'ArahanProject';
 const accountId = '015852978777';
 const serviceRole = `arn:aws:iam::${accountId}:role/${roleName}`; // Service IAM Role for appsync to access data sources
-const functionName = 'serverless-graphql';
+const functionName = 'Arahan-serverless';
 const lambdaArn = `arn:aws:lambda:${awsRegion}:${accountId}:function:${
   functionName
 }`;
