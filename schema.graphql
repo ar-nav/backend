@@ -2,8 +2,7 @@ input PlaceInput {
 	placeName: String!,
 	latitude: Int!,
 	longitude: Int!,
-	eventId: String!, 
-	eventName: String!
+	eventId: String!
 }
 
 input EventInput {
@@ -29,12 +28,12 @@ type Mutation {
 
 	# Delete Place 
 	deletePlace(
-		placeId: String!
+		ID: String!
     ): Place!
 
 	# Update existing Place Name
 	updatePlace(
-		placeId: String!,
+		ID: String!,
 		input: PlaceInput
 	): Place!
 }
@@ -45,7 +44,7 @@ type Query {
 	getAllPlaceByEventId(eventId: String!): Event
 
 	# search
-	getPlace(placeId: String!): Place!
+	getPlace(ID: String!): Place!
 	searchAllPlace(keyword: String!): Place
 }
 

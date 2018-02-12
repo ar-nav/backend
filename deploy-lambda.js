@@ -17,7 +17,7 @@ const userPoolId = 'us-east-1_tGZgUAA9n'; // Your Cognito User Pool Id
 const roleName = 'ArahanProject';
 const accountId = '015852978777';
 const serviceRole = `arn:aws:iam::${accountId}:role/${roleName}`; // Service IAM Role for appsync to access data sources
-const functionName = 'serverless-Arahan';
+const functionName = 'serverless-Arahan-production-graphql';
 const lambdaArn = `arn:aws:lambda:${awsRegion}:${accountId}:function:${
   functionName
 }`;
@@ -192,6 +192,34 @@ appsync
         typeName: 'Mutation' /* required */,
         responseMappingTemplate: fs.readFileSync(
           'mapping-templates/createPlace-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
+        fieldName: 'updatePlace' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/updatePlace-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Mutation' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/updatePlace-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
+        fieldName: 'deletePlace' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/deletePlace-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Mutation' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/deletePlace-response-mapping-template.txt',
           'utf8'
         ) /* required */,
       }

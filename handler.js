@@ -3,6 +3,10 @@ import "babel-polyfill";
 import shakeId from "uuid/v1";
 import AWS from "aws-sdk";
 
+AWS.config.apiVersions = {
+  dynamodb: '2012-08-10'
+};
+
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 console.log("Importing data into DynamoDB. Please wait.");
@@ -46,15 +50,22 @@ async function postEvent(handle) {
   });
 }
 
-async function getPlace(handle) {
+async function getRawPlace(handle) {
   return new Promise((resolve, reject) => {
     let params = {
-      TableName: "Places",
-      Item: {
-        'ID': handle
-      }
+      ExpressionAttributeNames: {
+      "PLC": "ID"
+      }, 
+      ExpressionAttributeValues: {
+      ":a": {
+        S: handle.ID
+        }
+      }, 
+      FilterExpression: "Artist = :a", 
+      ProjectionExpression: "#PLC", 
+      TableName: "Places"
     }
-    dynamoDb.get(params, function(err, data) {
+    dynamoDb.scan(params, function(err, data) {
       if (!err) {
         console.log('yolo', JSON.stringify(err));
         resolve(data)
@@ -67,6 +78,7 @@ async function getPlace(handle) {
 }
 
 async function postPlace(handle) {
+  console.log("handle create place",handle)
   return new Promise((resolve, reject) => {
     let id = shakeId()
     let params = {
@@ -76,8 +88,7 @@ async function postPlace(handle) {
         'placeName': handle.placeName,
         'latitude': handle.latitude,
         'longitude': handle.longitude,
-        'eventId': handle.eventId, 
-        'eventName': handle.eventName
+        'eventId': handle.eventId
       }
     }
     dynamoDb.put(params, function(err, data) {
@@ -85,11 +96,63 @@ async function postPlace(handle) {
         console.log('yolo', JSON.stringify(err));
         resolve({
           ID: id,
-          placeName: handle.placeName,
+          name: handle.placeName,
           latitude: handle.latitude,
           longitude: handle.longitude,
-          eventId: handle.eventId, 
-          eventName: handle.eventName
+          eventId: handle.eventId
+        })
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
+async function updateRawPlace(handle) {
+  console.log("handle create place",handle)
+  return new Promise((resolve, reject) => {
+    let id = shakeId()
+    let params = {
+      TableName: "Places",
+      Item: {
+        'ID': id,
+        'placeName': handle.placeName,
+        'latitude': handle.latitude,
+        'longitude': handle.longitude,
+        'eventId': handle.eventId
+      }
+    }
+    dynamoDb.put(params, function(err, data) {
+      if (!err) {
+        console.log('yolo', JSON.stringify(err));
+        resolve({
+          ID: id,
+          name: handle.placeName,
+          latitude: handle.latitude,
+          longitude: handle.longitude,
+          eventId: handle.eventId
+        })
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
+async function deleteRawPlace(handle) {
+  console.log("handle create place",handle)
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: 'Places',
+      Key:{
+          "ID":handles.ID
+      }
+    }
+    dynamoDb.delete(params, function(err, data) {
+      if (!err) {
+        console.log('yolo', JSON.stringify(err));
+        resolve({
+          ID: handle.ID
         })
       } else {
         console.log(err);
@@ -100,7 +163,7 @@ async function postPlace(handle) {
 }
 
 exports.graphqlHandler = (event, context, callback) => {
-  console.log("Received event {}", JSON.stringify(event, 3));
+  console.log("Received event {}", JSON.stringify(event));
 
   console.log("Got an Invoke Request.");
   switch (event.field) {
@@ -133,8 +196,8 @@ exports.graphqlHandler = (event, context, callback) => {
       break;
     }
     case "getPlace": {
-      console.log("eventArguments", context);
-      postPlace(event.arguments.ID)
+      console.log("eventArguments", event.arguments);
+      getRawPlace(event.arguments)
         .then(result => {
           console.log('data result create Place', result)
           callback(null, result);
@@ -145,8 +208,8 @@ exports.graphqlHandler = (event, context, callback) => {
         });
       break;
     }
-    case "createPlaces": {
-      console.log("eventArguments", context);
+    case "createPlace": {
+      console.log("event post place", event.arguments.input);
       postPlace(event.arguments.input)
         .then(result => {
           console.log('data result create Place', result)
