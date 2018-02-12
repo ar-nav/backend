@@ -20,7 +20,7 @@ custom:
 
 functions:
   graphql:
-    handler: handler.graphqlHandler
+    handler: src/handler.graphqlHandler
     events:
     - http:
         path: graphql
