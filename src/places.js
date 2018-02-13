@@ -1,3 +1,14 @@
+import "babel-polyfill";
+import shakeId from "uuid/v1";
+
+import AWS from "aws-sdk";
+
+AWS.config.apiVersions = {
+  dynamodb: "2012-08-10"
+};
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
 export async function getRawPlace(handle) {
   return new Promise((resolve, reject) => {
     let params = {
@@ -8,8 +19,19 @@ export async function getRawPlace(handle) {
     };
     dynamoDb.get(params, function(err, data) {
       if (!err) {
-        console.log("yolo", JSON.stringify(err));
-        resolve(data);
+        console.log("yolo", JSON.stringify(data));
+        dynamoDb.get(
+          {
+            Key: {
+              ID: data.Item.eventId
+            },
+            TableName: "Events"
+          },
+          function(err, result) {
+            data.Item.event = result.Item
+            resolve(data.Item)
+          }
+        );
       } else {
         console.log(err);
         reject(err);
@@ -25,7 +47,7 @@ export async function postPlace(handle) {
       TableName: "Places",
       Item: {
         ID: id,
-        placeName: handle.placeName,
+        name: handle.name,
         latitude: handle.latitude,
         longitude: handle.longitude,
         eventId: handle.eventId
@@ -36,7 +58,7 @@ export async function postPlace(handle) {
         console.log("yolo", JSON.stringify(err));
         resolve({
           ID: id,
-          name: handle.placeName,
+          name: handle.name,
           latitude: handle.latitude,
           longitude: handle.longitude,
           eventId: handle.eventId
@@ -68,7 +90,7 @@ export async function updateRawPlace(handle) {
           UpdateExpression:
             "SET placeName = :placeName, langlitude = :langlitude, longlitude = :longlitude, eventId = :eventId",
           ExpressionAttributeValues: {
-            ":placeName": handle.input.placeName || data.placeName,
+            ":placeName": handle.input.name || data.name,
             ":langlitude": handle.input.langlitude || data.langlitude,
             ":longitude": handle.input.longitude || data.longitude,
             ":eventId": handle.input.eventId || data.eventId
@@ -104,6 +126,67 @@ export async function deleteRawPlace(handle) {
         resolve({
           ID: handle.ID
         });
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
+export async function getAllPlaceRawByEvenId(handle) {
+  return new Promise((resolve, reject) => {
+    let params = {
+      TableName: "Places"
+    };
+    dynamoDb.scan(params, function(err, data) {
+      if (!err) {
+        let counter = 0
+        data.Items.forEach((item) => {
+          dynamoDb.get({ Key: { ID: item.eventId }, TableName: "Events"}, function(err, dataEvent) {
+            counter++
+            if(!err){
+               item.event = dataEvent.Item
+            }
+            if (counter === data.Items.length){
+              resolve(data.Items);
+            }
+          })
+
+        })
+        console.log("yolo", JSON.stringify(data.Items));
+
+      } else {
+        console.log(err);
+        reject(err);
+      }
+    });
+  });
+}
+export async function getAllRawPlaceByEventId(handle) {
+  return new Promise((resolve, reject) => {
+    let params = {
+      TableName: "Places"
+    };
+    dynamoDb.scan(params, function(err, data) {
+      if (!err) {
+        let counter = 0
+        let dataFilter = data.Items.filter(item => {
+          return item.eventId === handle
+        })
+        dataFilter.forEach((item) => {
+          dynamoDb.get({ Key: { ID: item.eventId }, TableName: "Events"}, function(err, dataEvent) {
+            counter++
+            if(!err){
+               item.event = dataEvent.Item
+            }
+            if (counter === data.Items.length){
+              resolve(dataFilter);
+            }
+          })
+
+        })
+        console.log("yolo", JSON.stringify(dataFilter));
+
       } else {
         console.log(err);
         reject(err);

@@ -1,6 +1,5 @@
 import "babel-polyfill";
 
-
 import shakeId from "uuid/v1";
 import AWS from "aws-sdk";
 
@@ -10,11 +9,8 @@ AWS.config.apiVersions = {
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-import {getRawEvent, postEvent} from 'events'
-import {getRawPlace, postPlace, updateRawPlace, deleteRawPlace} from 'places'
-
-
-
+import {getRawEvent, postEvent} from './events'
+import {getRawPlace, postPlace, updateRawPlace, deleteRawPlace, getAllPlaceRawByEvenId, getAllRawPlaceByEventId} from './places'
 
 exports.graphqlHandler = (event, context, callback) => {
   console.log("Received event {}", JSON.stringify(event));
@@ -98,6 +94,32 @@ exports.graphqlHandler = (event, context, callback) => {
         .catch(err => {
           console.log('fast place', err)
           callback(err);
+        });
+      break;
+    }
+    case "getAllPlaces": {
+      console.log("get All Place By Event ID", event.arguments.input);
+      getAllPlaceRawByEvenId(event.arguments.input)
+        .then(result => {
+          console.log('data result create Place', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          console.log('fast place', err)
+          callback(err)
+        });
+      break;
+    }
+    case "searchAllPlaceByEventId": {
+      console.log("search All Place By Event ID", event.arguments);
+      getAllRawPlaceByEventId(event.arguments.eventId)
+        .then(result => {
+          console.log('data result Search ALL By Event ID', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          console.log('fast place', err)
+          callback(err)
         });
       break;
     }

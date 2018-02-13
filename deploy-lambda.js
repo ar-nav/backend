@@ -22,7 +22,7 @@ const lambdaArn = `arn:aws:lambda:${awsRegion}:${accountId}:function:${
   functionName
 }`;
 
-const MAX_RETRIES = 10;
+const MAX_RETRIES = 100;
 let appId;
 
 function wait(timeout) {
@@ -220,6 +220,34 @@ appsync
         typeName: 'Mutation' /* required */,
         responseMappingTemplate: fs.readFileSync(
           'mapping-templates/deletePlace-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
+        fieldName: 'getAllPlaces' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/getAllPlaceByEventId-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Query' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/getAllPlaceByEventId-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
+        fieldName: 'searchAllPlaceByEventId' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/searchAllPlaceByEventId-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Query' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/searchAllPlaceByEventId-response-mapping-template.txt',
           'utf8'
         ) /* required */,
       }

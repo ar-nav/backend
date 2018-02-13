@@ -7,13 +7,17 @@
     "url": "git@github.com:serverless/serverless-graphql.git"
   },
   "scripts": {
+    "start": "node deploy-lambda.js",
+    "test": "jest",
     "deploy-prod": "serverless --stage=production --account_id=015852978777 deploy"
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^1.29.0",
     "aws-sdk": "^2.192.0",
+    "axios": "^0.17.1",
     "babel-polyfill": "^6.26.0",
     "bluebird": "^3.5.1",
+    "graphql-tester": "0.0.5",
     "node-fetch": "^1.7.3",
     "oauth": "^0.9.15",
     "twitter": "^1.7.1",
