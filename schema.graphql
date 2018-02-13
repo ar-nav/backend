@@ -1,7 +1,7 @@
 input PlaceInput {
 	name: String!,
-	latitude: Int!,
-	longitude: Int!,
+	latitude: String!,
+	longitude: String!,
 	eventId: String!
 }
 
@@ -58,8 +58,8 @@ type Event {
 type Place {
 	ID: String!,
 	name: String,
-	longitude: Int,
-	latitude: Int,
+	longitude: String,
+	latitude: String,
 	event: Event,
 }
 
