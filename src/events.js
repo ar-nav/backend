@@ -17,6 +17,7 @@ export async function getRawEvent(handle) {
       TableName: "Events"
     };
     dynamoDb.scan(params, function(err, data) {
+      console.log('masuk')
       if (!err) {
         console.log(JSON.stringify(data, null, 2));
         resolve(data.Items);
