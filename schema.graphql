@@ -1,0 +1,74 @@
+input PlaceInput {
+	name: String!,
+	latitude: String!,
+	longitude: String!,
+	eventId: String!
+}
+
+input EventInput {
+	eventName: String!
+}
+
+type Mutation {
+	# Create a Event
+	createEvent(
+		input: EventInput
+	): Event
+
+	# update a Event
+	updateEvent(
+		ID: String!,
+		input: EventInput
+	): Event
+
+	deleteEvent(
+		ID: String!,
+		input: EventInput
+	): String!
+	
+	# Create a Place for a Event
+	createPlace(
+		input: PlaceInput
+	): Place!
+
+	# Delete Place 
+	deletePlace(
+		ID: String!
+    ): Place!
+
+	# Update existing Place Name
+	updatePlace(
+		ID: String!,
+		input: PlaceInput
+	): Place!
+}
+
+type Query {
+	# search functionality 
+	getEvents: [Event]
+
+	# search
+	getAllPlaces: [Place]
+	getPlace(ID: String!): Place!
+
+	# onprogress
+	searchAllPlaceByEventId(eventId: String!): Place
+}
+
+type Event {
+	ID: String,
+	name: String
+}
+
+type Place {
+	ID: String!,
+	name: String,
+	longitude: String,
+	latitude: String,
+	event: Event,
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}
