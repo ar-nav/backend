@@ -1,7 +1,7 @@
 input PlaceInput {
-	placeName: String!,
-	latitude: Int!,
-	longitude: Int!,
+	name: String!,
+	latitude: String!,
+	longitude: String!,
 	eventId: String!
 }
 
@@ -20,6 +20,11 @@ type Mutation {
 		ID: String!,
 		input: EventInput
 	): Event
+
+	deleteEvent(
+		ID: String!,
+		input: EventInput
+	): String!
 	
 	# Create a Place for a Event
 	createPlace(
@@ -41,11 +46,13 @@ type Mutation {
 type Query {
 	# search functionality 
 	getEvents: [Event]
-	getAllPlaceByEventId(eventId: String!): Event
 
 	# search
+	getAllPlaces: [Place]
 	getPlace(ID: String!): Place!
-	searchAllPlace(keyword: String!): Place
+
+	# onprogress
+	searchAllPlaceByEventId(eventId: String!): Place
 }
 
 type Event {
@@ -56,9 +63,9 @@ type Event {
 type Place {
 	ID: String!,
 	name: String,
-	longitude: Int,
-	latitude: Int,
-	eventId: String,
+	longitude: String,
+	latitude: String,
+	event: Event,
 }
 
 schema {
