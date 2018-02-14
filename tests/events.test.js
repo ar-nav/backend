@@ -79,6 +79,34 @@ describe('get event', () => {
       expect(err.response).toEqual(undefined)
     })
   })
+
+  it('Should delete Event data', () => {
+    http.post('/', { mutation:`
+    {
+      deleteEvent(ID:"283283"){
+        ID
+      }
+    }` 
+  }).then(data => {
+        expect(data.status).toEqual(200)
+    }).catch(err => {
+      expect(err.response).toEqual(undefined)
+    })
+  })
+
+  it('Should delete Event data', () => {
+    http.post('/', { mutation:`
+    {
+      deleteEvent{
+        ID
+      }
+    }` 
+  }).then(data => {
+        expect(data).toBeNull()
+    }).catch(err => {
+      expect(err).not.toBeNull()
+    })
+  })
   
 })
 

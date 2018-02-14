@@ -31,14 +31,14 @@ export async function getRawPlace(handle) {
         ID: handle.ID
       }
     };
-    console.log('handle Places', handle.ID)
-    dynamoDb.scan(params, function(err, data) {
+    console.log('params', params)
+    dynamoDb.get(params, function(err, data) {
       if (!err) {
-        console.log("yolo", JSON.stringify(data));
-        dynamoDb.scan(
+        console.log(data.Item)
+        dynamoDb.get(
           {
             Key: {
-              ID: {S : data.Item.eventId}
+              ID: data.Item.eventId
             },
             TableName: "Events"
           },
@@ -48,14 +48,12 @@ export async function getRawPlace(handle) {
           }
         );
       } else {
-        console.log(err);
         reject(err);
       }
     });
   });
 }
 export async function postPlace(handle) {
-  console.log("handle create place", handle);
   return new Promise((resolve, reject) => {
     let id = shakeId();
     let params = {
@@ -70,7 +68,6 @@ export async function postPlace(handle) {
     };
     dynamoDb.put(params, function(err, data) {
       if (!err) {
-        console.log("yolo", JSON.stringify(err));
         resolve({
           ID: id,
           name: handle.name,
@@ -79,14 +76,12 @@ export async function postPlace(handle) {
           eventId: handle.eventId
         });
       } else {
-        console.log(err);
         reject(err);
       }
     });
   });
 }
 export async function updateRawPlace(handle) {
-  console.log("handle create place", handle);
   return new Promise((resolve, reject) => {
     let id = shakeId();
     let params = {
@@ -120,14 +115,12 @@ export async function updateRawPlace(handle) {
           }
         });
       } else {
-        console.log(err);
         reject(err);
       }
     });
   });
 }
 export async function deleteRawPlace(handle) {
-  console.log("handle create place", handle);
   return new Promise((resolve, reject) => {
     const params = {
       TableName: "Places",
@@ -137,12 +130,10 @@ export async function deleteRawPlace(handle) {
     };
     dynamoDb.delete(params, function(err, data) {
       if (!err) {
-        console.log("yolo", JSON.stringify(err));
         resolve({
           ID: handle.ID
         });
       } else {
-        console.log(err);
         reject(err);
       }
     });
@@ -168,10 +159,7 @@ export async function getAllPlaceRawByEvenId(handle) {
           })
 
         })
-        console.log("yolo", JSON.stringify(data.Items));
-
       } else {
-        console.log(err);
         reject(err);
       }
     });
@@ -200,10 +188,7 @@ export async function getAllRawPlaceByEventId(handle) {
           })
 
         })
-        console.log("yolo", JSON.stringify(dataFilter));
-
       } else {
-        console.log(err);
         reject(err);
       }
     });

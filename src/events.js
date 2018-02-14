@@ -22,8 +22,6 @@ AWS.config.apiVersions = {
 // }
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-console.log("Importing data into DynamoDB. Please wait.");
-
 export async function getRawEvent(handle) {
   return new Promise((resolve, reject) => {
     let params = {
@@ -73,10 +71,8 @@ export async function postEvent(handle) {
       };
       dynamoDb.put(params, function(err, data) {
         if (!err) {
-          console.log('yolo', JSON.stringify(err));
           resolve({ ID: id, name: handle });
         } else {
-          console.log(err);
           reject(err);
         }
       });
