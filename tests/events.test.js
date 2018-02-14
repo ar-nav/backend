@@ -20,5 +20,67 @@ describe('get event', () => {
       expect(err.response).toEqual(undefined)
     })
   })
+
+  it('Should error get users data', () => {
+    http.post('/', { mutation:`
+    {
+      createEvent{
+        ID
+        name
+      }
+    }` 
+  }).then(data => {
+      expect(data).toBeNull()
+    }).catch(err => {
+      expect(err.response).toEqual(undefined)
+    })
+  })
+
+  it('Should error get users data', () => {
+    http.post('/', { mutation:`
+    {
+      createEvent(ID:"283283"){
+        ID
+        name
+      }
+    }` 
+  }).then(data => {
+      expect(data).toBeNull()
+    }).catch(err => {
+      expect(err.response).toEqual(undefined)
+    })
+  })
+  it('Should error get users data', () => {
+    http.post('/', { mutation:`
+    {
+      createEvent(name:"test"){
+        ID
+        name
+      }
+    }` 
+  }).then(data => {
+      expect(data).toBeNull()
+    }).catch(err => {
+      expect(err.response).toEqual(undefined)
+    })
+  })
+
+  it('Should create Event data', () => {
+    http.post('/', { mutation:`
+    {
+      createEvent(input:"testing"){
+        ID
+        name
+      }
+    }` 
+  }).then(data => {
+        expect(data.status).toEqual(200)
+    }).catch(err => {
+      expect(err.response).toEqual(undefined)
+    })
+  })
+  
 })
 
+
+  

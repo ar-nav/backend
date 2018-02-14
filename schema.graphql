@@ -20,6 +20,11 @@ type Mutation {
 		ID: String!,
 		input: EventInput
 	): Event
+
+	deleteEvent(
+		ID: String!,
+		input: EventInput
+	): String!
 	
 	# Create a Place for a Event
 	createPlace(

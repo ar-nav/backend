@@ -170,6 +170,20 @@ appsync
       {
         apiId: appId /* required */,
         dataSourceName: 'lambda' /* required */,
+        fieldName: 'deleteEvent' /* required */,
+        requestMappingTemplate: fs.readFileSync(
+          'mapping-templates/deleteEvent-request-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+        typeName: 'Mutation' /* required */,
+        responseMappingTemplate: fs.readFileSync(
+          'mapping-templates/deleteEvent-response-mapping-template.txt',
+          'utf8'
+        ) /* required */,
+      },
+      {
+        apiId: appId /* required */,
+        dataSourceName: 'lambda' /* required */,
         fieldName: 'getPlace' /* required */,
         requestMappingTemplate: fs.readFileSync(
           'mapping-templates/getPlace-request-mapping-template.txt',

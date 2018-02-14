@@ -6,10 +6,23 @@ import AWS from "aws-sdk";
 AWS.config.apiVersions = {
   dynamodb: '2012-08-10'
 };
+// let dynamoDb = null
+
+// if (process.env.NODE_ENV == "test") {
+//   AWS.config.update({
+//     accessKeyId: "localAccessKey",
+//     secretAccessKey: "localSecretAccessKey",
+//     region: "localRegion"
+//   });
+//   dynamoDb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
+// }
+// else {
+//   dynamoDb = new AWS.DynamoDB.DocumentClient();
+// }
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-import {getRawEvent, postEvent} from './events'
+import {getRawEvent, postEvent, deleteRawEvent} from './events'
 import {getRawPlace, postPlace, updateRawPlace, deleteRawPlace, getAllPlaceRawByEvenId, getAllRawPlaceByEventId} from './places'
 
 exports.graphqlHandler = (event, context, callback) => {
@@ -18,28 +31,39 @@ exports.graphqlHandler = (event, context, callback) => {
   console.log("Got an Invoke Request.");
   switch (event.field) {
     case "getEvents": {
-      console.log("ini conntex", context);
       getRawEvent(event.field)
         .then(result => {
-          console.log('dataresult get Event',  JSON.stringify(result, null, 2));
+          // console.log('dataresult get Event',  JSON.stringify(result, null, 2));
           callback(null, result);
         })
         .catch(err => {
-          console.log('ini err get event', err)
+          // console.log('ini err get event', err)
           callback(err);
         });
 
       break;
     }
     case "createEvent": {
-      console.log("eventArguments", context);
       postEvent(event.arguments.input.eventName)
         .then(result => {
-          console.log('data result create Event', result)
+          // console.log('data result create Event', result)
           callback(null, result);
         })
         .catch(err => {
-          console.log('fast', err)
+          // console.log('fast', err)
+          callback(err);
+        });
+
+      break;
+    }
+    case "deleteEvent": {
+      deleteRawEvent(event.arguments)
+        .then(result => {
+          // console.log('data result create Event', result)
+          callback(null, result);
+        })
+        .catch(err => {
+          // console.log('fast', err)
           callback(err);
         });
 

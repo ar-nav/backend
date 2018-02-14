@@ -6,24 +6,39 @@ import AWS from "aws-sdk";
 AWS.config.apiVersions = {
   dynamodb: "2012-08-10"
 };
+// let dynamoDb = null
+
+// if (process.env.NODE_ENV == "test") {
+//   console.log('masuk if')
+//   AWS.config.update({
+//     accessKeyId: "localAccessKey",
+//     secretAccessKey: "localSecretAccessKey",
+//     region: "localRegion"
+//   });
+//   dynamoDb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
+// }
+// else {
+//   dynamoDb = new AWS.DynamoDB.DocumentClient();
+// }
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export async function getRawPlace(handle) {
   return new Promise((resolve, reject) => {
     let params = {
+      TableName: "Places",
       Key: {
         ID: handle.ID
-      },
-      TableName: "Places"
+      }
     };
-    dynamoDb.get(params, function(err, data) {
+    console.log('handle Places', handle.ID)
+    dynamoDb.scan(params, function(err, data) {
       if (!err) {
         console.log("yolo", JSON.stringify(data));
-        dynamoDb.get(
+        dynamoDb.scan(
           {
             Key: {
-              ID: data.Item.eventId
+              ID: {S : data.Item.eventId}
             },
             TableName: "Events"
           },
