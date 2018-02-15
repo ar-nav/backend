@@ -5,6 +5,8 @@ const http = axios.create({
     headers: {"x-api-key": "da2-arau223jmbbiddhflcebwwxhuq"}
 })
 
+const getID = null
+
 describe('testing place', () => {
   it('Should get All place data', () => {
     http.post('/', { query:`
@@ -84,6 +86,8 @@ describe('testing place', () => {
       }
     }` 
   }).then(data => {
+        console.log(data)
+        getID = data.data.ID
         expect(data.status).toEqual(200)
     }).catch(err => {
       expect(err.response).toEqual(undefined)
@@ -109,5 +113,34 @@ describe('testing place', () => {
       expect(err.response).toEqual(undefined)
     })
   })
+
+  it('Should delete Places data', () => {
+    http.post('/', { mutation:`
+    {
+      deletePlace(ID:${getID}){
+        ID
+      }
+    }` 
+  }).then(data => {
+        expect(data).not.toBeNull()
+    }).catch(err => {
+      expect(err).not.toBeNull()
+    })
+  })
+
+  it('Should err delete Places data', () => {
+    http.post('/', { mutation:`
+    {
+      deletePlace{
+        ID
+      }
+    }` 
+  }).then(data => {
+        expect(data).not.toBeNull()
+    }).catch(err => {
+      expect(err).not.toBeNull()
+    })
+  })
+  
 })
 

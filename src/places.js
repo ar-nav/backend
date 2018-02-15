@@ -10,11 +10,11 @@ AWS.config.apiVersions = {
 
 // if (process.env.NODE_ENV == "test") {
 //   console.log('masuk if')
-//   AWS.config.update({
-//     accessKeyId: "localAccessKey",
-//     secretAccessKey: "localSecretAccessKey",
-//     region: "localRegion"
-//   });
+  AWS.config.update({
+    // accessKeyId: "localAccessKey",
+    // secretAccessKey: "localSecretAccessKey",
+    region: "us-east-1"
+  });
 //   dynamoDb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
 // }
 // else {
@@ -125,7 +125,7 @@ export async function deleteRawPlace(handle) {
     const params = {
       TableName: "Places",
       Key: {
-        ID: handles.ID
+        ID: handle.ID
       }
     };
     dynamoDb.delete(params, function(err, data) {

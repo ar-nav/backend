@@ -9,11 +9,11 @@ AWS.config.apiVersions = {
 // let dynamoDb = null
 
 // if (process.env.NODE_ENV == "test") {
-//   AWS.config.update({
-//     accessKeyId: "localAccessKey",
-//     secretAccessKey: "localSecretAccessKey",
-//     region: "localRegion"
-//   });
+  AWS.config.update({
+    // accessKeyId: "localAccessKey",
+    // secretAccessKey: "localSecretAccessKey",
+    region: "us-east-1"
+  });
 //   dynamoDb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
 // }
 // else {
@@ -31,11 +31,9 @@ exports.graphqlHandler = (event, context, callback) => {
     case "getEvents": {
       getRawEvent(event.field)
         .then(result => {
-          // console.log('dataresult get Event',  JSON.stringify(result, null, 2));
           callback(null, result);
         })
         .catch(err => {
-          // console.log('ini err get event', err)
           callback(err);
         });
 
@@ -44,11 +42,9 @@ exports.graphqlHandler = (event, context, callback) => {
     case "createEvent": {
       postEvent(event.arguments.input.eventName)
         .then(result => {
-          // console.log('data result create Event', result)
           callback(null, result);
         })
         .catch(err => {
-          // console.log('fast', err)
           callback(err);
         });
 
@@ -57,11 +53,9 @@ exports.graphqlHandler = (event, context, callback) => {
     case "deleteEvent": {
       deleteRawEvent(event.arguments)
         .then(result => {
-          // console.log('data result create Event', result)
           callback(null, result);
         })
         .catch(err => {
-          // console.log('fast', err)
           callback(err);
         });
 
@@ -98,7 +92,7 @@ exports.graphqlHandler = (event, context, callback) => {
       break;
     }
     case "deletePlace": {
-      deleteRawPlace(event.arguments.input)
+      deleteRawPlace(event.arguments)
         .then(result => {
           callback(null, result);
         })

@@ -11,8 +11,8 @@ AWS.config.apiVersions = {
 // if (process.env.NODE_ENV == "test") {
 //   console.log('masuk if')
   AWS.config.update({
-    accessKeyId: "AKIAIOYCJRTLVNBWEFFQ",
-    secretAccessKey: "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",
+    // accessKeyId: "AKIAIOYCJRTLVNBWEFFQ",
+    // secretAccessKey: "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",
     region: "us-east-1"
   });
 //   dynamoDb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });

@@ -32,7 +32,6 @@ describe("get event", () => {
     };
     const context = {};
     handler.graphqlHandler(event, context, (err, data) => {
-      console.log("ini data post", data);
     });
   });
   it("Should error Create Event data", () => {

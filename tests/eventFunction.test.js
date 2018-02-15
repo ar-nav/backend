@@ -7,7 +7,7 @@ describe("get event", () => {
     event.getRawEvent().then(result => {
       expect(result).not.toBeNull()
     })
-    .catch(err => console.log(err))
+    .catch(err => expect(err).not.toBeNull())
   });
 });
 
@@ -16,6 +16,6 @@ describe("post event", () => {
     event.postEvent("Test").then(result => {
       expect(result).not.toBeNull()
     })
-    .catch(err => console.log(err))
+    .catch(err => expect(err).not.toBeNull())
   });
 })
